@@ -28,7 +28,7 @@ body {
     flex-direction: column;
 }
 
-/* Container chính - Giảm max-width để tập trung nội dung */
+/* Container chính */
 .container {
     flex-grow: 1;
     max-width: 1080px;
