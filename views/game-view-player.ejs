@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <title>Chơi game - I Guest</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    
+    <div class="timer-container">
+        <div id="timer-bar" class="timer-bar"></div>
+    </div>
+    <div class="game-view player-view">
+        <h2 id="question-title" class="question-title" ></h2>
+
+        <div id="player-status-screen" class="player-status-screen">
+            <h2>Hãy nhìn lên màn hình chính!</h2>
+            <p>Chuẩn bị trả lời...</p>
+        </div>
+
+        <div id="answer-options-grid" class="options-grid" style="display: none;">
+            </div>
+
+        <div id="player-wait-screen" class="player-status-screen" style="display: none;">
+            <h2>Bạn đã trả lời!</h2>
+            <p>Chờ những người chơi khác...</p>
+        </div>
+    </div>
+    
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+        const pin = new URLSearchParams(window.location.search).get('pin');
+        const playerName = sessionStorage.getItem('name');
+        
+        const statusScreen = document.getElementById('player-status-screen');
+        const optionsGrid = document.getElementById('answer-options-grid');
+        const waitScreen = document.getElementById('player-wait-screen');
+        const questionTitle = document.getElementById('question-title');
+        const timerDisplay = document.getElementById('timer-display');
+
+        let startTime;
+        let timerInterval;
+
+        socket.on('connect', () => {
+            socket.emit('player:rejoin_game', { /*pin:*/pin, name: playerName }); 
+        });
+
+        // Lắng nghe câu hỏi mới từ server
+        socket.on('game:new_question', (data) => {
+            if (timerInterval) clearInterval(timerInterval);
+            
+
+            questionTitle.textContent = data.title;
+
+            statusScreen.style.display = 'none';
+            waitScreen.style.display = 'none';
+            optionsGrid.style.display = 'grid';
+            optionsGrid.innerHTML = '';
+            
+            data.options.forEach((option, index) => {
+                if (option && option.trim() !== '') {
+                    const button = document.createElement('button');
+                    button.className = 'answer-btn';
+                    button.textContent = option;
+                    button.dataset.index = index;
+
+                    button.addEventListener('click', () => {
+                        const timeTaken = (Date.now() - startTime) / 1000; 
+                        socket.emit('player:answer', { pin, answerIndex: index, timeTaken });
+                        
+                        
+                        optionsGrid.style.display = 'none'; 
+                        waitScreen.style.display = 'block';                       
+                    });
+                    optionsGrid.appendChild(button);
+                }
+            });
+            
+            // Bắt đầu đếm ngược
+            startTime = Date.now();
+            let timeLeft = data.time;
+            timerDisplay.textContent = timeLeft;
+
+            timerInterval = setInterval(() => { 
+                timeLeft--;
+                timerDisplay.textContent = timeLeft;
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                }
+            }, 1000);
+        });
+
+        // Nếu nhận tín hiệu chờ (khi rejoin mà đã trả lời rồi)
+        socket.on('game:wait', () => {
+             statusScreen.style.display = 'none';
+             optionsGrid.style.display = 'none';
+             waitScreen.style.display = 'block';
+        });
+
+        // Chuyển sang màn hình bảng xếp hạng
+        socket.on('game:show_leaderboard', (data) => {
+            if (timerInterval) clearInterval(timerInterval);
+            // Lưu dữ liệu để trang leaderboard có thể truy cập
+            sessionStorage.setItem('leaderboardData', JSON.stringify(data));
+            window.location.href = `/leaderboard?pin=${pin}`;
+        });
+        
+        // Xử lý game kết thúc
+        socket.on('game:over', (finalScores) => {
+             sessionStorage.setItem('finalScores', JSON.stringify(finalScores));
+             window.location.href = `/game-over?pin=${pin}`;
+        });
+    </script>
+</body>
+</html>

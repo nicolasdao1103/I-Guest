@@ -1,0 +1,22 @@
+{
+  "name": "i-guest",
+  "version": "1.0.0",
+  "description": "Một trang web trắc nghiệm.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "author": "Gemini",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "connect-mongo": "^5.1.0",
+    "dotenv": "^16.4.5",
+    "ejs": "^3.1.9",
+    "express": "^4.19.2",
+    "express-session": "^1.18.0",
+    "mongodb": "^6.20.0",
+    "mongoose": "^8.3.2",
+    "socket.io": "^4.7.5"
+  }
+}

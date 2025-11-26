@@ -1,0 +1,57 @@
+<%- include('partials/header', { title: 'Kết thúc!' }) %>
+
+<div class="game-over">
+    <h1>Trò chơi kết thúc!</h1>
+    
+    <div class="podium">
+        <div class="rank first">
+            <h2>1<small>st</small></h2>
+            <p id="winner-1">...</p>
+        </div>
+        <div class="rank second">
+            <h2>2<small>nd</small></h2>
+            <p id="winner-2">...</p>
+        </div>
+        <div class="rank third">
+            <h2>3<small>rd</small></h2>
+            <p id="winner-3">...</p>
+        </div>
+    </div>
+
+    <div id="congrats-message" class="congrats-message">
+        </div>
+    
+    <a href="/" class="btn">Chơi lại</a>
+    <% if (user && user.role === 'host') { %>
+        <a href="/dashboard" class="btn btn-primary">Về trang quản lý</a>
+    <% } %>
+</div>
+
+<script>
+    const finalScores = JSON.parse(sessionStorage.getItem('finalScores'));
+    const myName = sessionStorage.getItem('name'); // Tên của người chơi hiện tại
+
+    if (finalScores) {
+        // Hiển thị top 3
+        if (finalScores[0]) document.getElementById('winner-1').textContent = finalScores[0].name;
+        if (finalScores[1]) document.getElementById('winner-2').textContent = finalScores[1].name;
+        if (finalScores[2]) document.getElementById('winner-3').textContent = finalScores[2].name;
+
+        // Tìm thứ hạng của người chơi hiện tại và hiển thị tin nhắn
+        if (myName) {
+            const myRank = finalScores.findIndex(p => p.name === myName) + 1;
+            if (myRank > 0 && myRank <= 10) {
+                const message = `Chúc mừng bạn đã đạt thứ hạng ${myRank}/10! 🎉`;
+                document.getElementById('congrats-message').textContent = message;
+            }
+        }
+    }
+
+    // Xóa dữ liệu game khỏi session storage
+    sessionStorage.removeItem('pin');
+    sessionStorage.removeItem('name');
+    sessionStorage.removeItem('leaderboardData');
+    sessionStorage.removeItem('finalScores');
+</script>
+
+<%- include('partials/footer') %>

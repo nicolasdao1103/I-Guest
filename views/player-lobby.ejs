@@ -1,0 +1,43 @@
+<%- include('partials/header', { title: 'Đang chờ...' }) %>
+
+<div class="lobby player-lobby">
+    <h2>Bạn đã vào phòng!</h2>
+    <p>Hãy chờ người quản trò bắt đầu nhé...</p>
+    <div class="spinner"></div>
+    <h3>Chúc may mắn, <span id="player-name"></span>!</h3>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    const socket = io();
+    const pin = new URLSearchParams(window.location.search).get('pin');
+    
+    // Hiển thị tên người chơi đã lưu từ trang chủ
+    document.getElementById('player-name').textContent = sessionStorage.getItem('name');
+
+    socket.on('connect', () => {
+        console.log('Player đã kết nối tới server, gửi yêu cầu tái kết nối lobby...');
+        socket.emit('player:rejoin_lobby', { pin, name });
+    });
+
+    // Lắng nghe tín hiệu bắt đầu game từ server
+    socket.on('game:new_question', () => {
+        // Chuyển hướng đến trang chơi game
+        console.log('Đã nhận được tín hiệu game:new_question, đang chuyển trang...');
+        window.location.href = `/game/player?pin=${pin}`;
+    });
+
+    // Nếu host hủy game
+    socket.on('game:aborted', () => {
+        alert('Host đã hủy phòng chơi. Bạn sẽ được đưa về trang chủ.');
+        sessionStorage.clear();
+        window.location.href = '/';
+    });
+
+    socket.on('error:generic', (message) => {
+        alert(message);
+        window.location.href = '/';
+    });
+</script>
+
+<%- include('partials/footer') %>

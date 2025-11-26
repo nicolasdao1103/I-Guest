@@ -1,0 +1,29 @@
+<%- include('partials/header', { title: 'Đăng ký' }) %>
+
+<div class="auth-form">
+    <h2>Đăng ký tài khoản</h2>
+    <% if (typeof error !== 'undefined' && error) { %>
+        <p class="error-message"><%= error %></p>
+    <% } %>
+    <form action="/register" method="POST">
+        <div class="form-group">
+            <label for="username">Tên đăng nhập</label>
+            <input type="text" name="username" id="username" required>
+        </div>
+        <div class="form-group">
+            <label for="password">Mật khẩu</label>
+            <input type="password" name="password" id="password" required>
+        </div>
+        <div class="form-group">
+            <label>Vai trò của bạn là gì?</label>
+            <select name="role">
+                <option value="user">Người chơi (User)</option>
+                <option value="host">Người tạo game (Host)</option>
+            </select>
+        </div>
+        <button type="submit" class="btn">Đăng ký</button>
+    </form>
+    <p class="auth-switch">Đã có tài khoản? <a href="/login">Đăng nhập</a></p>
+</div>
+
+<%- include('partials/footer') %>

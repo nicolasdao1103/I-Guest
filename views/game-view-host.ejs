@@ -1,0 +1,69 @@
+<%- include('partials/header', { title: 'Host Game', user: user }) %>
+
+<div class="game-view host-view">
+    <div class="timer-container">
+        <div id="timer-bar" class="timer-bar"></div>
+    </div>
+    
+    <div class="host-question-area">
+        <h2 id="question-title">Trò chơi sắp bắt đầu...</h2>
+    </div>
+
+    <div class="host-info-footer">
+        <span id="question-counter" class="question-counter">...</span>
+        <div class="pin-display-small">PIN: <%= pin %></div>
+        <div class="answer-counter">
+            <span id="answered-count">0</span> / <span id="total-players-count">0</span> người đã trả lời
+        </div>
+    </div>
+
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    const socket = io();
+    const pin = '<%= pin %>';
+
+    const timerBar = document.getElementById('timer-bar');
+    const questionCounter = document.getElementById('question-counter');
+    const questionTitle = document.getElementById('question-title');
+    const answeredCountEl = document.getElementById('answered-count');
+    const totalPlayersCountEl = document.getElementById('total-players-count');
+
+    socket.on('connect', () => {
+        socket.emit('host:rejoin_game', pin); 
+    });
+
+    // Lắng nghe câu hỏi mới
+    socket.on('game:new_question', (data) => {
+        //questionCounter.textContent = `Câu ${data.questionIndex + 1}/${data.totalQuestions}`;
+        questionTitle.textContent = data.title;
+        answeredCountEl.textContent = '0'; // Reset bộ đếm
+        totalPlayersCountEl.textContent = data.totalPlayers;
+        questionCounter.textContent = `Câu ${data.questionIndex + 1}/${data.totalQuestions}`;
+        
+        timerBar.style.animation = 'none';
+        timerBar.offsetHeight; 
+        timerBar.style.animation = `countdown ${data.time}s linear forwards`;
+    });
+
+    // Cập nhật khi có người chơi trả lời
+    socket.on('update:player_answered', (data) => {
+        answeredCountEl.textContent = data.totalAnswered;
+        totalPlayersCountEl.textContent = data.totalPlayers;
+    });
+
+    // Chuyển sang màn hình bảng xếp hạng
+    socket.on('game:show_leaderboard', (data) => {
+        sessionStorage.setItem('leaderboardData', JSON.stringify(data));
+        window.location.href = `/leaderboard?pin=${pin}`;
+    });
+
+    // Xử lý game kết thúc
+    socket.on('game:over', (finalScores) => {
+        sessionStorage.setItem('finalScores', JSON.stringify(finalScores));
+        window.location.href = `/game-over?pin=${pin}`;
+    });
+</script>
+
+<%- include('partials/footer') %>

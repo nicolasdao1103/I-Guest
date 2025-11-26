@@ -1,0 +1,102 @@
+<%- include('partials/header', { title: 'Sửa Quiz', user: user }) %>
+
+<div class="create-quiz-form">
+    <h2>Chỉnh sửa bộ câu hỏi</h2>
+    
+    <form action="/quiz/edit/<%= quiz._id %>" method="POST">
+        
+        <div class="form-group">
+            <label for="title">Tiêu đề bộ câu hỏi</label>
+            <input type="text" id="title" name="title" value="<%= quiz.title %>" required>
+        </div>
+        
+        <hr>
+        
+        <div id="questions-container">
+            <% if (quiz.questions && quiz.questions.length > 0) { %>
+                <% quiz.questions.forEach(function(q, index) { %>
+                    <div class="question-block" id="q-block-<%= index %>">
+                        <div class="question-header">
+                            <h4>Câu hỏi <%= index + 1 %></h4>
+                            <button type="button" onclick="removeQuestion('<%= index %>')" class="btn delete-btn">Xóa</button>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Nội dung câu hỏi:</label>
+                            <input type="text" name="questions[<%= index %>][title]" value="<%= q.title %>" placeholder="Nhập câu hỏi" required>
+                        </div>
+
+                        <% q.options.forEach(function(opt, optIndex) { %>
+                            <div class="form-group options">
+                                <input type="text" name="questions[<%= index %>][options][<%= optIndex %>]" value="<%= opt %>" placeholder="Đáp án <%= optIndex + 1 %>" required>
+                                
+                                <input type="radio" 
+                                       name="questions[<%= index %>][correctAnswer]" 
+                                       value="<%= optIndex %>" 
+                                       <%= (q.correctAnswerIndex == optIndex) ? 'checked' : '' %> 
+                                       required>
+                            </div>
+                        <% }); %>
+                    </div>
+                <% }); %>
+            <% } %>
+        </div>
+        
+        <div class="form-actions">
+            <button type="button" id="add-question-btn" class="btn btn-secondary">Thêm câu hỏi</button>
+            <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
+            <a href="/host-dashboard" class="btn btn-cancel">Hủy</a>
+        </div>
+    </form>
+</div>
+
+<script>
+    const questionsContainer = document.getElementById('questions-container');
+    const addQuestionBtn = document.getElementById('add-question-btn');
+    
+    let questionIndex = Number('<%= (quiz.questions) ? quiz.questions.length : 0 %>');
+
+    function addQuestion() {
+        const questionHTML = `
+            <div class="question-block" id="q-block-${questionIndex}">
+                <div class="question-header">
+                    <h4>Câu hỏi mới</h4>
+                    <button type="button" onclick="removeQuestion('${questionIndex}')" class="btn delete-btn">Xóa</button>
+                </div>
+                <div class="form-group">
+                    <label>Nội dung câu hỏi:</label>
+                    <input type="text" name="questions[${questionIndex}][title]" placeholder="Nhập câu hỏi" required>
+                </div>
+                
+                <div class="form-group options">
+                    <input type="text" name="questions[${questionIndex}][options][0]" placeholder="Đáp án 1" required>
+                    <input type="radio" name="questions[${questionIndex}][correctAnswer]" value="0" checked required>
+                </div>
+                <div class="form-group options">
+                    <input type="text" name="questions[${questionIndex}][options][1]" placeholder="Đáp án 2" required>
+                    <input type="radio" name="questions[${questionIndex}][correctAnswer]" value="1">
+                </div>
+                <div class="form-group options">
+                    <input type="text" name="questions[${questionIndex}][options][2]" placeholder="Đáp án 3">
+                    <input type="radio" name="questions[${questionIndex}][correctAnswer]" value="2">
+                </div>
+                <div class="form-group options">
+                    <input type="text" name="questions[${questionIndex}][options][3]" placeholder="Đáp án 4">
+                    <input type="radio" name="questions[${questionIndex}][correctAnswer]" value="3">
+                </div>
+            </div>
+        `;
+        questionsContainer.insertAdjacentHTML('beforeend', questionHTML);
+        questionIndex++;
+    }
+
+    window.removeQuestion = function(index) {
+        const block = document.getElementById(`q-block-${index}`);
+        if(block) block.remove();
+    };
+
+    addQuestionBtn.addEventListener('click', addQuestion);
+</script>
+
+
+<%- include('partials/footer') %>

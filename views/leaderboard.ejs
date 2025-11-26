@@ -1,0 +1,64 @@
+<%- include('partials/header', { title: 'Bảng xếp hạng' }) %>
+
+<div class="leaderboard-container">
+    <h2>Bảng xếp hạng</h2>
+
+    <div id="correct-answer-display" class="correct-answer-display"></div>
+
+    <ol id="leaderboard-list"></ol>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    const socket = io();
+    const pin = new URLSearchParams(window.location.search).get('pin');
+    const leaderboardList = document.getElementById('leaderboard-list');
+    const correctAnswerDisplay = document.getElementById('correct-answer-display');
+    const playerName = sessionStorage.getItem('name');
+
+    const isHostString = "<%= (user && user.role === 'host') ? 'true' : 'false' %>";
+    const isHost = isHostString === 'true';
+
+    socket.on('connect', () => {
+        if (isHost) {
+            socket.emit('host:rejoin_game', pin); 
+        } else {
+            socket.emit('player:rejoin_game', { pin: pin, name: playerName });
+        }
+    });
+
+    // Lấy dữ liệu từ sessionStorage mà game-view đã lưu
+    const data = JSON.parse(sessionStorage.getItem('leaderboardData'));
+
+    if (data && data.players) {
+        // Hiển thị đáp án đúng (đã được server gửi qua)
+        correctAnswerDisplay.textContent = `Đáp án đúng là: ${data.correctAnswerText}`;
+
+        // Chỉ hiển thị 10 người chơi hàng đầu
+        const topPlayers = data.players.slice(0, 10);
+        
+        topPlayers.forEach((player, index) => {
+            const li = document.createElement('li');
+            li.innerHTML = `<span>${index + 1}. ${player.name}</span> <span>${player.score} điểm</span>`;
+            leaderboardList.appendChild(li);
+        });
+    }
+
+    // Lắng nghe câu hỏi tiếp theo
+    socket.on('game:new_question', () => {
+        // isHost có thể được kiểm tra ở đây để chuyển hướng đúng
+        if (isHost) {
+            window.location.href = `/game/host?pin=${pin}`;
+        } else { 
+            window.location.href = `/game/player?pin=${pin}`;
+         } 
+    });
+
+    // Xử lý game kết thúc
+    socket.on('game:over', (finalScores) => {
+        sessionStorage.setItem('finalScores', JSON.stringify(finalScores));
+        window.location.href = `/game-over?pin=${pin}`;
+    });
+</script>
+
+<%- include('partials/footer') %>

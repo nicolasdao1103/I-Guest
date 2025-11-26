@@ -1,0 +1,35 @@
+<%- include('partials/header', { title: 'Bảng điều khiển', user: user }) %>
+
+<div class="host-dashboard container">
+    <h2>Chào mừng, <%= user.username %>!</h2>
+    <p>Đây là nơi bạn quản lý các bộ câu hỏi của mình.</p>
+
+    <div class="dashboard-actions">
+        <a href="/create-lobby" class="btn btn-primary">➕ Tạo một Game mới</a>
+        <a href="/quiz/create" class="btn btn-secondary">➕ Tạo bộ câu hỏi mới</a>
+    </div>
+
+    <h3>Các bộ câu hỏi của bạn</h3>
+    <% if (quizzes.length > 0) { %>
+        <ul class="quiz-list">
+            <% quizzes.forEach(quiz => { %>
+                <li class="quiz-item">
+                    <span class="quiz-item-title"><%= quiz.title %> (<%= quiz.questions.length %> câu hỏi)</span>
+                    
+                    <div class="quiz-actions" >
+                        <a href="/quiz/edit/<%= quiz._id %>" class="btn btn-secondary btn-edit" >Sửa</a>
+
+                        <form action="/quiz/delete/<%= quiz._id %>" method="POST" onsubmit="return confirm('Bạn có chắc muốn xóa bộ câu hỏi này?')">
+                            <button type="submit" class="btn delete-btn">Xóa</button>
+                        </form>
+                    </div>
+                </li>    
+            <% }) %>
+        </ul>
+    <% } else { %>
+        <p>Bạn chưa tạo bộ câu hỏi nào. Hãy tạo một cái mới!</p>
+    <% } %>
+</div>
+
+
+<%- include('partials/footer') %>

@@ -1,0 +1,59 @@
+<%- include('partials/header', { title: 'Tạo Quiz', user: user }) %>
+
+<div class="create-quiz-form">
+    <h2>Tạo bộ câu hỏi mới</h2>
+    <form action="/quiz/create" method="POST">
+        <div class="form-group">
+            <label for="title">Tiêu đề bộ câu hỏi</label>
+            <input type="text" id="title" name="title" required>
+        </div>
+        <hr>
+        <div id="questions-container">
+            </div>
+        <button type="button" id="add-question-btn" class="btn">Thêm câu hỏi</button>
+        <button type="submit" class="btn btn-primary">Lưu bộ câu hỏi</button>
+    </form>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const questionsContainer = document.getElementById('questions-container');
+        const addQuestionBtn = document.getElementById('add-question-btn');
+        let questionIndex = 0;
+
+        function addQuestion() {
+            const questionHTML = `
+                <div class="question-block">
+                    <h4>Câu hỏi ${questionIndex + 1}</h4>
+                    <div class="form-group">
+                        <input type="text" name="questions[${questionIndex}][title]" placeholder="Nội dung câu hỏi" required>
+                    </div>
+                    <div class="form-group options">
+                        <input type="text" name="questions[${questionIndex}][options][0]" placeholder="Đáp án 1" required>
+                        <input type="radio" name="questions[${questionIndex}][correctAnswer]" value="0" required>
+                    </div>
+                    <div class="form-group options">
+                        <input type="text" name="questions[${questionIndex}][options][1]" placeholder="Đáp án 2" required>
+                        <input type="radio" name="questions[${questionIndex}][correctAnswer]" value="1">
+                    </div>
+                    <div class="form-group options">
+                        <input type="text" name="questions[${questionIndex}][options][2]" placeholder="Đáp án 3">
+                        <input type="radio" name="questions[${questionIndex}][correctAnswer]" value="2">
+                    </div>
+                    <div class="form-group options">
+                        <input type="text" name="questions[${questionIndex}][options][3]" placeholder="Đáp án 4">
+                        <input type="radio" name="questions[${questionIndex}][correctAnswer]" value="3">
+                    </div>
+                </div>
+            `;
+            questionsContainer.insertAdjacentHTML('beforeend', questionHTML);
+            questionIndex++;
+        }
+
+        addQuestionBtn.addEventListener('click', addQuestion);
+        // Tự động thêm câu hỏi đầu tiên khi tải trang
+        addQuestion();
+    });
+</script>
+
+<%- include('partials/footer') %>

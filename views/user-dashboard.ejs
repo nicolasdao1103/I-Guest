@@ -1,0 +1,79 @@
+<%- include('partials/header', { title: 'Bảng điều khiển User', user: user }) %>
+
+<div class="user-dashboard">
+    <h2>Chào mừng, <%= user.username %>!</h2>
+
+    <div class="join-game-box logged-in">
+        <h3>Tham gia một ván chơi</h3>
+        <form id="join-form-user">
+            <input type="text" id="pin-input" placeholder="Nhập mã PIN" required>
+            <input type="hidden" id="name-input" value="<%= user.username %>">
+            <button type="submit" class="btn">Vào phòng</button>
+        </form>
+        <div id="error-message" class="error-message" style="display: none;"></div>
+    </div>
+
+    <hr>
+
+    <h3>Lịch sử tham gia</h3>
+    <% if (games && games.length > 0) { %>
+        <ul class="history-list">
+            <% games.forEach(game => { %>
+                <li class="history-item" style="border-bottom: 1px solid #ddd; padding: 10px 0;">
+                    <% const myResult = game.finalScores.find(p => p.userId && p.userId.toString() === user.id.toString()); %>
+                    <% if (myResult) { %>
+                        <div class="history-details" style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <span class="quiz-title" style="font-weight: bold; font-size: 1.1rem;">Quiz: <%= game.quizId ? game.quizId.title : 'Đã bị xóa' %></span>
+                                <br>
+                                <span class="game-score">Điểm: <%= myResult.score %></span>
+                                <span class="game-date" style="color: #666; font-size: 0.9rem;"> - <%= new Date(game.playedAt).toLocaleDateString('vi-VN') %></span>
+                            </div>
+                    
+                            <form action="/history/delete/<%= game._id %>" method="POST" onsubmit="return confirm('Xóa kết quả ván này khỏi lịch sử?');" style="margin: 0;">
+                                <button type="submit" class="btn" style="background-color: #ff9800; color: white; padding: 5px 10px; font-size: 0.8rem;">Xóa</button>
+                            </form>
+                        </div>
+                    <% } %>
+                </li>
+            <% }) %>
+        </ul>
+    <% } else { %>
+        <p>Bạn chưa tham gia ván chơi nào.</p>
+    <% } %>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    const socket = io();
+    const joinForm = document.getElementById('join-form-user');
+    const pinInput = document.getElementById('pin-input');
+    const nameInput = document.getElementById('name-input');
+    const errorMessage = document.getElementById('error-message');
+
+    joinForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const pin = pinInput.value.trim();
+        const name = nameInput.value; // Lấy tên từ input ẩn
+        
+        // Gửi thông tin user đã đăng nhập
+        socket.emit('player:join', { pin, name, userId: '<%= user.id %>' });
+    });
+
+    socket.on('player:joined', (pin) => {
+        sessionStorage.setItem('pin', pin);
+        sessionStorage.setItem('name', nameInput.value);
+        window.location.href = `/lobby/player?pin=${pin}`;
+    });
+
+    // Xử lý lỗi và hiển thị
+    function handleError(message) {
+        errorMessage.textContent = message;
+        errorMessage.style.display = 'block';
+    }
+
+    socket.on('error:room_not_found', () => handleError('Không tìm thấy phòng với mã PIN này!'));
+    socket.on('error:game_already_started', () => handleError('Trò chơi đã bắt đầu, bạn không thể tham gia!'));
+</script>
+
+<%- include('partials/footer') %>

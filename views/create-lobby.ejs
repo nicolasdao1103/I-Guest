@@ -1,0 +1,63 @@
+<%- include('partials/header', { title: 'Tạo phòng chờ', user: user }) %>
+
+<div class="create-lobby-container">
+    <h2>Host một ván chơi mới</h2>
+    <p>Chọn một bộ câu hỏi từ danh sách của bạn để bắt đầu.</p>
+
+    <% if (quizzes && quizzes.length > 0) { %>
+        <form id="create-lobby-form">
+            <div class="form-group">
+                <label for="quiz-select">Chọn bộ câu hỏi:</label>
+                <select name="quizId" id="quiz-select" class="quiz-select">
+                    <% quizzes.forEach(quiz => { %>
+                        <option value="<%= quiz._id %>"><%= quiz.title %> (<%= quiz.questions.length %> câu hỏi)</option>
+                    <% }) %>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Tạo phòng chờ</button>
+        </form>
+    <% } else { %>
+        <div class="no-quizzes-message">
+            <p>Bạn chưa có bộ câu hỏi nào!</p>
+            <a href="/quiz/create" class="btn">Tạo một bộ câu hỏi ngay</a>
+        </div>
+    <% } %>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    // Khởi tạo kết nối socket
+    const socket = io();
+    const createLobbyForm = document.getElementById('create-lobby-form');
+
+    // Chỉ thêm trình xử lý sự kiện nếu form tồn tại
+    if (createLobbyForm) {
+        createLobbyForm.addEventListener('submit', (e) => {
+            // Ngăn chặn form gửi đi theo cách truyền thống
+            e.preventDefault(); 
+            
+            // Lấy ID của bộ câu hỏi đã được chọn từ dropdown
+            const selectedQuizId = document.getElementById('quiz-select').value;
+            
+            if (selectedQuizId) {
+                console.log(`Yêu cầu tạo game với quiz ID: ${selectedQuizId}`);
+                // Gửi sự kiện 'host:create' lên server với ID của quiz đã chọn
+                socket.emit('host:create', selectedQuizId);
+            }
+        });
+    }
+
+    // Lắng nghe sự kiện game đã được tạo thành công từ server
+    socket.on('game:created', (pin) => {
+        console.log(`Game được tạo với PIN: ${pin}. Đang chuyển hướng...`);
+        // Chuyển host đến trang phòng chờ (host-lobby) với mã PIN
+        window.location.href = `/lobby/host?pin=${pin}`;
+    });
+
+    // Xử lý lỗi nếu có
+    socket.on('error:generic', (message) => {
+        alert(`Đã xảy ra lỗi: ${message}`);
+    });
+</script>
+
+<%- include('partials/footer') %>

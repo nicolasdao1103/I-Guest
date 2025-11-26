@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>I Guest - Trang chủ</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div class="container main-page">
+        <h1>I Guest</h1>
+        <div class="join-game-box">
+            <form id="join-form">
+                <input type="text" id="pin-input" placeholder="Mã PIN" required>
+                <input type="text" id="name-input" placeholder="Tên của bạn" required>
+                <button type="submit">Tham gia</button>
+            </form>
+        </div>
+        <div class="auth-links">
+            <a href="/login">Đăng nhập</a> hoặc <a href="/register">Đăng ký</a> để tạo game
+        </div>
+    </div>
+    
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+        const joinForm = document.getElementById('join-form');
+        const pinInput = document.getElementById('pin-input');
+        const nameInput = document.getElementById('name-input');
+
+        joinForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const pin = pinInput.value.trim();
+            const name = nameInput.value.trim();
+            if (pin && name) {
+                // Lưu tên vào sessionStorage để các trang sau có thể dùng
+                sessionStorage.setItem('name', name);
+                socket.emit('player:join', { pin, name });
+            }
+        });
+        
+        // Lắng nghe sự kiện đã vào phòng thành công
+        socket.on('player:joined', (pin) => {
+            // Lưu mã PIN và chuyển sang trang phòng chờ
+            sessionStorage.setItem('pin', pin);
+            window.location.href = `/lobby/player?pin=${pin}`;
+        });
+
+        // Xử lý các lỗi có thể xảy ra khi tham gia
+        socket.on('error:room_not_found', () => {
+            alert('Không tìm thấy phòng với mã PIN này!');
+        });
+        
+        socket.on('error:game_already_started', () => {
+            alert('Trò chơi đã bắt đầu, bạn không thể tham gia!');
+        });
+
+        socket.on('game:aborted', () => {
+            alert('Host đã hủy phòng chơi. Bạn sẽ được đưa về trang chủ.');
+            window.location.href = '/';
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <title>Phòng chờ - I Guest</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div class="container lobby">
+        <h2>Phòng chơi đã được tạo!</h2>
+        <p>Mã PIN:</p>
+        <div class="pin-display"><%= pin %></div>
+        <button id="start-game-btn" class="btn btn-primary">Bắt đầu trò chơi</button>
+        <hr>
+        <h3>Người chơi đã tham gia (<span id="player-count">0</span>):</h3>
+        <ul id="player-list">
+            </ul>
+    </div>
+    
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+        const pin = '<%= pin %>';
+        const startBtn = document.getElementById('start-game-btn');
+        const playerList = document.getElementById('player-list');
+        const playerCount = document.getElementById('player-count');
+        
+        // Gửi sự kiện "tái kết nối" ngay khi vào trang 
+        socket.on('connect', () => {
+        console.log('Đã kết nối tới server, gửi yêu cầu tái kết nối host...');
+        socket.emit('host:rejoin', pin);
+        });
+        
+        // Khi host nhấn nút bắt đầu
+        startBtn.addEventListener('click', () => {
+            socket.emit('host:start_game', pin);
+        });
+
+        // Lắng nghe sự kiện cập nhật danh sách người chơi
+        socket.on('update:player_list', (players) => {
+            playerList.innerHTML = ''; // Xóa danh sách cũ
+            players.forEach(player => {
+                const li = document.createElement('li');
+                li.textContent = player.name;
+                playerList.appendChild(li);
+            });
+            playerCount.textContent = players.length;
+        });
+
+        // Khi game bắt đầu, chuyển host đến trang game
+        socket.on('game:new_question', (questionData) => {
+        // Lưu lại dữ liệu để các trang sau có thể truy cập
+        sessionStorage.setItem('gameData', JSON.stringify(questionData));
+        window.location.href = `/game/host?pin=${pin}`;
+        });
+
+        socket.on('error:generic', (message) => {
+        alert(message);
+        window.location.href = '/host-dashboard';
+        });
+    </script>
+</body>
+</html>

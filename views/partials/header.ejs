@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <a href="/" class="nav-brand">I Guest 🚀</a>
+        <div class="nav-links">
+            <% if (typeof user !== 'undefined' && user) { %>
+                <% if (user.role === 'host') { %>
+                    <a href="/host-dashboard">Bảng điều khiển host</a>
+                <% } else { %>
+                    <a href="/user-dashboard">Bảng điều khiển User</a>
+                <% } %>
+                    <a href="/logout">Đăng xuất</a>
+                <% } else { %>
+                    <a href="/login">Đăng nhập</a>
+                    <a href="/register">Đăng ký</a>
+            <% } %>
+        </div>
+    </nav>
+    <div class="container">

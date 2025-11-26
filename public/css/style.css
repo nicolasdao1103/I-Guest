@@ -1,0 +1,612 @@
+/* ========================================= */
+/* ---          Cài đặt chung             ---*/
+/* ========================================= */
+:root {
+    --color-primary: #4a148c; /* Tím đậm */
+    --color-secondary: #f9a825; /* Vàng sáng */
+    --color-text: #333333;
+    --color-light-bg: #f5f5f5;
+    --color-white: #ffffff;
+    --color-success: #43a047;
+    --color-danger: #e53935;
+    --shadow-light: 0 4px 10px rgba(0, 0, 0, 0.08);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--color-light-bg);
+    color: var(--color-text);
+    line-height: 1.6;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Container chính - Giảm max-width để tập trung nội dung */
+.container {
+    flex-grow: 1;
+    max-width: 1080px;
+    width: 90%;
+    margin: 30px auto;
+    padding: 30px;
+    background: var(--color-white);
+    border-radius: 12px;
+    box-shadow: var(--shadow-light);
+}
+
+/* =========================== */
+/* ---        Navbar       --- */
+/* =========================== */
+.navbar {
+    background-color: var(--color-primary);
+    color: var(--color-white);
+    padding: 0.8rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.2);
+}
+.nav-brand {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--color-white);
+    text-decoration: none;
+    letter-spacing: 1px;
+}
+.nav-links a {
+    color: var(--color-white);
+    text-decoration: none;
+    margin-left: 1.5rem;
+    padding: 5px 10px;
+    border-radius: 4px;
+    transition: background-color 0.2s, transform 0.1s;
+}
+.nav-links a:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+}
+
+/* =============================== */
+/* --- Forms, Inputs, & Buttons --- */
+/* =============================== */
+.btn {
+    display: inline-block;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 8px;
+    background-color: var(--color-secondary);
+    color: var(--color-text);
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    text-align: center;
+    transition: background-color 0.3s, transform 0.1s;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+}
+.btn:hover {
+    background-color: #fbc02d;
+    transform: translateY(-1px);
+}
+.btn-primary {
+    background-color: var(--color-primary);
+    color: var(--color-white);
+}
+.btn-primary:hover {
+    background-color: #6a1b9a;
+}
+.btn-secondary {
+    background-color: var(--color-light-bg);
+    color: var(--color-text);
+}
+.btn-secondary:hover {
+    background-color: #e0e0e0;
+}
+.btn-cancel {
+    background-color: #757575 !important;
+    color: white !important;
+}
+.btn-cancel:hover {
+    background-color: #555555 !important;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+.form-group input[type="text"],
+.form-group input[type="password"],
+.form-group select {
+    width: 100%;
+    padding: 10px 15px;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+    font-size: 1rem;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+.form-group input:focus,
+.form-group select:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(74, 20, 140, 0.1);
+    outline: none;
+}
+.error-message {
+    color: var(--color-danger);
+    background-color: #ffebee;
+    border: 1px solid #ef9a9a;
+    padding: 10px;
+    border-radius: 6px;
+    margin-bottom: 15px;
+}
+
+/* =========================== */
+/* ---      Homepage       --- */
+/* =========================== */
+.main-page {
+    text-align: center;
+    padding: 50px 20px;
+}
+.main-page h1 {
+    font-size: 3rem;
+    color: var(--color-primary);
+    margin-bottom: 30px;
+}
+.join-game-box {
+    max-width: 500px;
+    margin: 0 auto;
+    background: var(--color-light-bg);
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+}
+.join-game-box form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+.join-game-box input {
+    font-size: 1.2rem;
+    padding: 15px 10px;
+    text-align: center;
+}
+.join-game-box button {
+    font-size: 1.2rem;
+    padding: 15px 30px;
+}
+.auth-links {
+    margin-top: 30px;
+    font-size: 1.1rem;
+    color: #555;
+}
+.auth-links a {
+    color: var(--color-primary);
+    font-weight: 600;
+}
+
+/* --- Auth Forms (Login/Register) --- */
+.auth-form {
+    max-width: 450px;
+    margin: 2rem auto;
+    padding: 30px;
+    background: var(--color-white);
+    border-radius: 10px;
+    box-shadow: var(--shadow-light);
+}
+.auth-form h2 {
+    text-align: center;
+    color: var(--color-primary);
+    margin-bottom: 25px;
+}
+.auth-switch {
+    margin-top: 20px;
+    text-align: center;
+}
+
+/* ================================== */
+/* --- Host Dashboard & Quiz Lists --- */
+/* ================================== */
+.host-dashboard h2 {
+    color: var(--color-primary);
+    margin-bottom: 10px;
+}
+.dashboard-actions {
+    margin: 25px 0;
+    display: flex;
+    gap: 15px;
+}
+.quiz-list {
+    list-style: none;
+    padding: 0;
+}
+.quiz-item {
+    background: var(--color-light-bg);
+    padding: 20px;
+    margin-bottom: 12px;
+    border-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background-color 0.2s, box-shadow 0.2s;
+    border-left: 5px solid var(--color-secondary);
+}
+.quiz-item:hover {
+    background-color: #eeeeee;
+    box-shadow: 0 2px 8px rgba(74, 20, 140, 0.1);
+}
+.quiz-item-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--color-primary);
+}
+.quiz-actions {
+    display: flex;
+    gap: 10px;
+}
+.quiz-actions .btn {
+    padding: 8px 15px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    border-radius: 6px;
+}
+
+/* ================================= */
+/* ---    Create/Edit Quiz       --- */
+/* ================================= */
+.create-quiz-form {
+    max-width: 900px;
+    margin: 20px auto;
+}
+.create-quiz-form h2 {
+    color: var(--color-primary);
+    margin-bottom: 20px;
+}
+.question-block {
+    background: var(--color-light-bg);
+    padding: 20px;
+    margin-bottom: 25px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+}
+.question-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    border-bottom: 1px dashed #cccccc;
+    padding-bottom: 10px;
+}
+.question-header h4 {
+    color: var(--color-primary);
+}
+.delete-btn {
+    background: var(--color-danger);
+    color: white;
+    padding: 5px 10px;
+    font-size: 0.9rem;
+    border-radius: 4px;
+}
+.delete-btn:hover {
+    background-color: #c62828;
+}
+.form-actions {
+    margin-top: 30px; 
+    display: flex;
+    gap: 15px;
+    justify-content: flex-end;
+}
+/* Kiểu cho đáp án và radio button */
+.options {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 10px;
+    padding-left: 10px; 
+}
+.options input[type="text"] {
+    flex-grow: 1;
+    width: auto; 
+}
+.options input[type="radio"] {
+    min-width: 20px; 
+    min-height: 20px;
+    cursor: pointer;
+    margin: 0;
+}
+
+/* =============================== */
+/* ---    Lobby (Phòng chờ)    --- */
+/* =============================== */
+.lobby {
+    text-align: center;
+    padding: 40px 20px;
+}
+.lobby h2 {
+    color: var(--color-primary);
+}
+.pin-display {
+    font-size: 4rem;
+    font-weight: 900;
+    color: var(--color-white);
+    background: var(--color-primary);
+    padding: 20px 40px;
+    border-radius: 15px;
+    margin: 20px auto 30px;
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+    display: inline-block;
+    letter-spacing: 5px;
+}
+#player-list {
+    list-style: none;
+    padding: 0;
+    max-width: 600px;
+    margin: 20px auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 10px;
+}
+#player-list li {
+    background: var(--color-secondary);
+    color: var(--color-text);
+    padding: 10px;
+    border-radius: 6px;
+    font-weight: 600;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Spinner cho trang chờ người chơi */
+.spinner {
+    border: 4px solid rgba(0, 0, 0, .1);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border-left-color: var(--color-primary);
+    animation: spin 1s ease infinite;
+    margin: 20px auto;
+}
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+
+/* ================================ */
+/* --- Game Views (Host/Player) --- */
+/* ================================ */
+.game-view {
+    padding: 0; 
+    box-shadow: none;
+    background: none;
+    margin: 0 auto;
+    min-height: 80vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Thanh thời gian */
+.timer-container {
+    width: 100%;
+    background-color: #ddd;
+    height: 15px;
+    border-radius: 0;
+    overflow: hidden;
+    margin-bottom: 20px;
+}
+.timer-bar {
+    height: 100%;
+    background-color: var(--color-secondary); 
+    transition: background-color 0.5s;
+}
+@keyframes countdown {
+    from { width: 100%; }
+    to { width: 0%; }
+}
+
+/* --- Host View --- */
+.host-question-area {
+    text-align: center;
+    padding: 40px 20px;
+    font-size: 1.8rem;
+    min-height: 200px;
+    background: var(--color-white);
+    border-radius: 12px;
+    box-shadow: var(--shadow-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+    flex-grow: 1;
+}
+.host-info-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 0;
+    border-top: 1px solid #eee;
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: #555;
+}
+.pin-display-small {
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: var(--color-primary);
+    background: var(--color-light-bg);
+    padding: 5px 15px;
+    border-radius: 6px;
+}
+.question-counter {
+    font-weight: bold;
+}
+
+/* --- Player View --- */
+.player-view {
+    justify-content: center;
+    padding: 0 10px;
+}
+.player-status-screen {
+    text-align: center;
+    padding: 50px 0;
+}
+.options-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    width: 100%;
+    max-width: 900px;
+    margin: 20px auto;
+}
+.answer-btn {
+    padding: 30px;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: transform 0.1s ease, box-shadow 0.2s;
+    box-shadow: 0 5px 0 rgba(0, 0, 0, 0.2);
+}
+.answer-btn:active {
+    transform: scale(0.98) translateY(5px);
+    box-shadow: 0 2px 0 rgba(0, 0, 0, 0.2);
+}
+
+/* Màu nút đáp án */
+.options-grid button:nth-child(1) { background-color: #e53935; color: white; } /* Đỏ */
+.options-grid button:nth-child(2) { background-color: #1e88e5; color: white; } /* Xanh dương */
+.options-grid button:nth-child(3) { background-color: #43a047; color: white; } /* Xanh lá */
+.options-grid button:nth-child(4) { background-color: #f9a825; color: #333; } /* Vàng */
+
+.options-grid button.selected {
+    border: 5px solid var(--color-primary);
+    opacity: 0.7;
+}
+
+/* =================================== */
+/* --- Leaderboard (Bảng xếp hạng) --- */
+/* =================================== */
+.leaderboard-container {
+    text-align: center;
+}
+.leaderboard-container h2 {
+    color: var(--color-primary);
+    margin-bottom: 20px;
+}
+#correct-answer-display {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--color-success);
+    margin-bottom: 25px;
+    background: #e8f5e9;
+    padding: 15px;
+    border-radius: 8px;
+}
+#leaderboard-list {
+    list-style: none;
+    padding: 0;
+    max-width: 600px;
+    margin: 0 auto;
+    counter-reset: rank-counter;
+}
+#leaderboard-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    background: var(--color-light-bg);
+    border-radius: 8px;
+    margin-bottom: 10px;
+    font-size: 1.2rem;
+    font-weight: 500;
+    border-left: 5px solid var(--color-primary);
+    transition: transform 0.2s, background 0.2s;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+/* Thêm số thứ tự */
+#leaderboard-list li::before {
+    counter-increment: rank-counter;
+    content: counter(rank-counter) ".";
+    font-weight: bold;
+    font-size: 1.4rem;
+    margin-right: 15px;
+    color: var(--color-secondary);
+}
+#leaderboard-list li:nth-child(1) {
+    background: #fff8e1;
+    border-left-color: gold;
+    font-size: 1.4rem;
+    font-weight: 700;
+}
+#leaderboard-list li:nth-child(1)::before {
+    color: gold;
+}
+
+/* ================================ */
+/* --- Game Over -- Leaderboard --- */
+/* ================================ */
+.game-over {
+    text-align: center;
+    padding: 30px;
+}
+.game-over h1 {
+    color: var(--color-danger);
+    margin-bottom: 40px;
+}
+.podium {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    gap: 15px;
+    height: 250px;
+    margin-bottom: 40px;
+}
+.rank {
+    width: 120px;
+    padding-top: 15px;
+    border-radius: 8px 8px 0 0;
+    color: var(--color-text);
+    box-shadow: 0 -5px 10px rgba(0, 0, 0, 0.1);
+}
+.rank h2 {
+    font-size: 2.5rem;
+    margin-bottom: 5px;
+}
+.rank p {
+    font-weight: 600;
+    font-size: 1rem;
+    padding: 5px;
+    word-break: break-word;
+}
+.first {
+    height: 180px;
+    background-color: gold;
+    order: 2;
+    transform: scale(1.1);
+}
+.second {
+    height: 140px;
+    background-color: silver;
+    order: 1;
+    margin-top: 40px;
+}
+.third {
+    height: 100px;
+    background-color: #cd7f32; 
+    order: 3;
+    margin-top: 80px;
+}
+.congrats-message {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--color-success);
+    margin-bottom: 30px;
+}
