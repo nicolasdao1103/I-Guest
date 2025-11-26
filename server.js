@@ -31,13 +31,6 @@ app.set('view engine', 'ejs'); // Sử dụng EJS làm công cụ render giao di
 app.use(express.static('public')); // Phục vụ các file tĩnh (CSS, JS client) từ thư mục 'public'
 app.use(express.urlencoded({ extended: true })); // Xử lý dữ liệu gửi lên từ form
 
-// store: MongoStore.create({
-//     mongoUrl: process.env.MONGO_URI,
-//     collectionName: 'sessions',
-//     stringify: false
-// })
-
-//console.log('MONGO_URI:', process.env.MONGO_URI);
 
 // Cấu hình session để lưu trạng thái đăng nhập của người dùng
 const sessionMiddleware = session({
@@ -48,7 +41,6 @@ const sessionMiddleware = session({
         mongoUrl: process.env.MONGO_URI, 
         collectionName: 'sessions',
         ttl: 24 * 60 * 60 
-        //stringify: false
     })
 });
 app.use(sessionMiddleware);
@@ -59,12 +51,11 @@ io.use((socket, next) => {
 });
 
 // --- SỬ DỤNG CÁC ROUTES ĐÃ ĐỊNH NGHĨA ---
-app.use('/', authRoutes);      // Các routes liên quan đến xác thực (/login, /register)
-app.use('/quiz', quizRoutes);  // Các routes liên quan đến quiz (/quiz/create)
-app.use('/', viewRoutes);      // Các routes hiển thị trang chính (/, /dashboard, ...)
+app.use('/', authRoutes);      
+app.use('/quiz', quizRoutes);  
+app.use('/', viewRoutes);      
 
 // --- BIẾN LƯU TRỮ TRẠNG THÁI CÁC PHÒNG CHƠI ---
-// Key là mã PIN, value là object chứa thông tin phòng chơi
 const games = {};
 
 // --- LOGIC TRUNG TÂM CỦA SOCKET.IO ---
@@ -81,7 +72,7 @@ io.on('connection', (socket) => {
         }
 
         try {
-            const quizData = await Quiz.findById(quizId).lean(); // .lean() để lấy object thuần túy, nhanh hơn
+            const quizData = await Quiz.findById(quizId).lean(); 
             if (!quizData) {
                 socket.emit('error:generic', 'Không tìm thấy bộ câu hỏi này.');
                 return;
@@ -96,7 +87,6 @@ io.on('connection', (socket) => {
                 questionIndex: -1,
                 isLive: false,
                 totalAnswered: 0,
-                //answeredPlayers: new Set(),
                 timer: null
             };
             socket.join(pin);
@@ -144,18 +134,6 @@ io.on('connection', (socket) => {
             socket.join(pin);
             io.to(game.hostSocketId).emit('update:player_list', game.players);
         }
-        // const userSession = socket.request.session.user;
-        // // Kiểm tra xem phòng có tồn tại và người kết nối có đúng là host của phòng không
-        // if (game && userSession && game.hostUserId.toString() === userSession.id.toString()) {
-        //     // Cập nhật lại socket ID mới của host
-        //     game.hostSocketId = socket.id;
-        //     socket.join(pin);
-        //     console.log(`Host User ID: ${userSession.id} đã tái kết nối vào phòng ${pin} với Socket ID mới: ${socket.id}`);
-        //     // Gửi lại danh sách người chơi hiện tại cho host
-        //     socket.emit('update:player_list', game.players);
-        // } else {
-        //     socket.emit('error:generic', 'Không thể tái kết nối vào phòng.');
-        // }
     });
 
     socket.on('player:rejoin_game', ({ pin, name }) => {
@@ -252,7 +230,7 @@ io.on('connection', (socket) => {
             socket.join(pin);
             socket.emit('player:joined', pin); // Báo cho người chơi là đã vào phòng thành công
             io.to(game.hostId).emit('update:player_list', game.players); // Cập nhật danh sách người chơi cho Host
-            if(game.hostSocketId) io.to(game.hostSocketId).emit('update:player_list', game.players); // Gửi danh sách cho host mới (dùng hostSocketId)
+            if(game.hostSocketId) io.to(game.hostSocketId).emit('update:player_list', game.players); // Gửi danh sách cho host mới 
         }else {
             socket.join(pin);
             socket.emit('player:joined', pin);
@@ -287,44 +265,10 @@ io.on('connection', (socket) => {
     // Ghi lại thông tin ID để dễ dàng gỡ lỗi trên terminal
         console.log(`[DEBUG] ID Host của game: ${game.hostUserId.toString()}`);
         console.log(`[DEBUG] ID User từ session: ${userSession.id.toString()}`);
-
-    // // BƯỚC KIỂM TRA QUAN TRỌNG
-    //     if (game.hostUserId.toString() === userSession.id.toString()) {
-    //         game.isLive = true;
-    //         console.log(`✅ Host ${userSession.id} đã bắt đầu game ${pin}`);
-    // // Bắt đầu câu hỏi đầu tiên, hàm này sẽ gửi sự kiện 'game:new_question' cho mọi người
-    //         nextQuestion(pin);
-    //     } else {
-    // // Gửi thông báo lỗi cụ thể về cho client nếu xác thực thất bại
-    //         console.error(`[DEBUG] Lỗi xác thực: User ${userSession.id} đã cố gắng bắt đầu game của host ${game.hostUserId}.`);
-    //         socket.emit('error:generic', 'Bạn không phải là chủ phòng để bắt đầu game.');
-    //     }
     });
     
     // Sự kiện khi người chơi gửi câu trả lời
     socket.on('player:answer', ({ pin, answerIndex, timeTaken }) => {
-        // const game = games[pin];
-
-        // if (!game || !game.isLive) return;
-
-        // const player = game.players.find(p => p.id === socket.id);
-        // if (!player || game.answeredPlayers.has(socket.id)) {
-        //     return; // Dừng nếu không tìm thấy người chơi hoặc người này đã trả lời rồi
-        // }
-
-        // game.answeredPlayers.add(socket.id);
-        // const question = game.quizData.questions[game.questionIndex];
-        // let score = 0;
-        // if (answerIndex == question.correctAnswerIndex) {
-        //     score = Math.round(1000 - (timeTaken * (1000 / 15))); // Công thức tính điểm
-        // }
-        // player.score += score;
-        
-        // // Báo cho Host biết có thêm người trả lời
-        // io.to(game.hostId).emit('update:player_answered', {
-        //     totalAnswered: game.answeredPlayers.size,
-        //     totalPlayers: game.players.length
-        // });
         handleAnswer(socket, { pin, answerIndex, timeTaken });
     });
 
@@ -339,15 +283,6 @@ io.on('connection', (socket) => {
                 console.log(`Host của phòng ${pin} có thể đã thoát. Phòng sẽ bị hủy sau một thời gian nếu không kết nối lại.`);
                 return;
             
-                /*const playerIndex = game.players.findIndex(p => p.id === socket.id);
-                if (playerIndex !== -1) {
-                    game.players.splice(playerIndex, 1);
-                    // Cập nhật lại danh sách cho Host (nếu host còn đang kết nối)
-                    if (game.hostSocketId) {
-                        io.to(game.hostSocketId).emit('update:player_list', game.players);
-                    }
-                    break;
-                }*/
                const playerIndex = game.players.findIndex(p => p.id === socket.id);
                 if (playerIndex !== -1) {
                     const playerName = game.players[playerIndex].name;
@@ -474,7 +409,7 @@ function showLeaderboard(pin) {
 
     io.to(pin).emit('game:show_leaderboard', leaderboardData);
     
-    // Sau 5 giây hiển thị bảng xếp hạng, chuyển sang câu hỏi tiếp theo
+    // Sau 3 giây hiển thị bảng xếp hạng, chuyển sang câu hỏi tiếp theo
     game.timer = setTimeout(() => nextQuestion(pin), 3000);
 }
 

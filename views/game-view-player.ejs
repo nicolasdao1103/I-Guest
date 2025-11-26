@@ -42,7 +42,7 @@
         let timerInterval;
 
         socket.on('connect', () => {
-            socket.emit('player:rejoin_game', { /*pin:*/pin, name: playerName }); 
+            socket.emit('player:rejoin_game', { pin, name: playerName }); 
         });
 
         // Lắng nghe câu hỏi mới từ server

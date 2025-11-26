@@ -20,8 +20,11 @@
 
     <div id="congrats-message" class="congrats-message">
         </div>
-    
-    <a href="/" class="btn">Chơi lại</a>
+    <% if (user && user.role === 'host') { %>
+        <a href="/host-dashboard" class="btn">Chơi lại</a>
+    <% } else { %>
+        <a href="/user-dashboard" class="btn">Chơi lại</a>
+    <% } %>
     <% if (user && user.role === 'host') { %>
         <a href="/dashboard" class="btn btn-primary">Về trang quản lý</a>
     <% } %>
