@@ -54,7 +54,7 @@
     joinForm.addEventListener('submit', (e) => {
         e.preventDefault();
         const pin = pinInput.value.trim();
-        const name = nameInput.value; // Lấy tên từ input ẩn
+        const name = nameInput.value; 
         
         // Gửi thông tin user đã đăng nhập
         socket.emit('player:join', { pin, name, userId: '<%= user.id %>' });

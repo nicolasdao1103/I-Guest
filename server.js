@@ -77,7 +77,7 @@ io.on('connection', (socket) => {
                 socket.emit('error:generic', 'Không tìm thấy bộ câu hỏi này.');
                 return;
             }
-            
+        
             const pin = Math.floor(100000 + Math.random() * 900000).toString();
             games[pin] = {
                 quizData: quizData,
@@ -421,7 +421,6 @@ async function endGame(pin) {
     game.players.sort((a, b) => b.score - a.score);
     io.to(pin).emit('game:over', game.players);
     console.log(`🏁 Game ${pin} đã kết thúc.`);
-    
     // Lưu kết quả vào database
     try {
         // Lấy thông tin cần thiết từ danh sách người chơi trong phòng
